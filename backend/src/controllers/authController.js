@@ -45,6 +45,7 @@ export const signup = async (req, res) => {
   }
 };
 export const login = async (req, res) => {
+  console.log('login reached')
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -90,15 +91,16 @@ export const updateProfile = async (req, res) => {
     }
 
     const uploadResponse = await cloudinary.uploader.upload(profilePic);
-    const updatedUser = User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
         profilePic: uploadResponse.secure_url,
       },
       { new: true }
     );
+    console.log('profile photo updated')
 
-    return res.status(200).json({});
+    return res.status(200).json({message: "Profile updated successfully", updatedUser});
   } catch (error) {
     console.log("Error in updateProfile controller", error.message);
     res.status(500).json({ message: "Internal server error" });
